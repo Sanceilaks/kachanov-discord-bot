@@ -1,0 +1,18 @@
+{
+  "name": "kachanov_discord_bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "tsc-watch": "^6.0.4",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "discord.js": "^14.12.1"
+  },
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "build": "tsc",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\""
+  }
+}
