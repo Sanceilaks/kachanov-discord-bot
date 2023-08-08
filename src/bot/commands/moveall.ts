@@ -1,4 +1,9 @@
-import { Interaction, SlashCommandBuilder, PermissionFlagsBits  } from "discord.js";
+import {
+  Interaction,
+  SlashCommandBuilder,
+  PermissionFlagsBits,
+  ChannelType,
+} from "discord.js";
 import { ICommand } from "../command";
 
 export default class MoveAllCommand implements ICommand {
@@ -18,6 +23,7 @@ export default class MoveAllCommand implements ICommand {
 
   execute = async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
+    await interaction.deferReply({ ephemeral: true });
 
     const fromChannel = await interaction.guild?.channels.fetch(
       interaction.options.getChannel("from")?.id!,
@@ -26,21 +32,31 @@ export default class MoveAllCommand implements ICommand {
       interaction.options.getChannel("to")?.id!,
     );
 
-    if (!fromChannel?.isVoiceBased() || !toChannel?.isVoiceBased()) {
-      interaction.reply({
+    if ((!fromChannel?.isVoiceBased() && fromChannel?.type != ChannelType.GuildCategory) || !toChannel?.isVoiceBased()) {
+      interaction.editReply({
         content: "Channel must be voice channels",
-        ephemeral: true,
       });
       return;
     }
 
-    for (const [_name, user] of fromChannel.members) {
-      user.voice.setChannel(toChannel);
+    if (fromChannel?.type == ChannelType.GuildCategory) {
+      for (const [name, channel] of fromChannel.children.cache.filter((c) => c.isVoiceBased() && c.id != fromChannel.id)) {
+        for (const [_name, user] of channel.members) {
+          user.voice.setChannel(toChannel).catch(() => {
+            console.error(`Failed to move ${user.nickname} to ${toChannel.name}`);
+          });
+        }
+      }
+    } else {
+      for (const [_name, user] of fromChannel.members) {
+        user.voice.setChannel(toChannel).catch(() => {
+          console.error(`Failed to move ${user.nickname} to ${toChannel.name}`);
+        });
+      }
     }
 
-    interaction.reply({
+    interaction.editReply({
       content: "Done",
-      ephemeral: true,
     });
   };
 }

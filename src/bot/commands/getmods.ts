@@ -4,7 +4,6 @@ import {
   MessageComponentBuilder,
 } from "discord.js";
 import { ICommand } from "../command";
-import { HoiSavesManager } from "../hoisavesmanager";
 
 export default class GetMods implements ICommand {
   getData = async () => {
@@ -24,14 +23,21 @@ export default class GetMods implements ICommand {
 
   execute = async (interaction: Interaction) => {
     if (!interaction.isChatInputCommand()) return;
-
     const cfgForServer =
       interaction.client.configuration.getConfigurationForServer(
         interaction.guildId!,
       );
 
+    await interaction.deferReply({
+      ephemeral:
+        cfgForServer == null ||
+        !cfgForServer.channelsWithoutEphemeral!.includes(
+          interaction.channelId!,
+        ),
+    });
+
     const mods = await interaction.client.hoiManager.getMods();
-    interaction.reply({
+    interaction.editReply({
       content: mods
         .map(
           (mod) =>
@@ -43,11 +49,6 @@ export default class GetMods implements ICommand {
             }`,
         )
         .join("\n"),
-      ephemeral:
-        cfgForServer == null ||
-        !cfgForServer.channelsWithoutEphemeral!.includes(
-          interaction.channelId!,
-        ),
     });
   };
 }

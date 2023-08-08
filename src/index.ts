@@ -1,4 +1,4 @@
-import Client from "./client";
+import Client from "./bot/client";
 import { ConfigurationManager } from "./configuration";
 import moment from "moment";
 

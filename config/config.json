@@ -6,5 +6,6 @@
       "serverId": "680034017604665347",
       "channelsWithoutEphemeral": ["1119684255858053251"]
     }
-  ]
+  ],
+  "isModsFromLaunchConfig": true
 }

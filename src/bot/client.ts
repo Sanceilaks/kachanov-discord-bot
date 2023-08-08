@@ -6,9 +6,9 @@ import {
 } from "discord.js";
 import fs from "fs";
 import path from "path";
-import { HoiSavesManager } from "./hoisavesmanager";
+import { HoiSavesManager } from "../hoimanager";
 import { ICommand } from "./command";
-import { ConfigurationManager } from "./configuration";
+import { ConfigurationManager } from "../configuration";
 
 export default class BotClient extends DiscordClient {
   configuration: ConfigurationManager;

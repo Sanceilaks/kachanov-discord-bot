@@ -62,6 +62,24 @@ export class HoiModDescriptor {
   }
 }
 
+// export class HoiLauncherManager {
+//   jomini?: Jomini;
+
+//   public async initialize() {
+//     this.jomini = await Jomini.initialize();
+//   }
+
+//   public async getMods() {
+//     const mods: string[] = this.parsedSave!.mods;
+
+//     const modsDescriptors = (
+//       await HoiModDescriptor.getDescriptors(this.jomini!)
+//     ).filter((mod) => mods.includes(mod.name!));
+
+//     return modsDescriptors;
+//   }
+// }
+
 export class HoiSavesManager {
   jomini?: Jomini;
   parsedSave?: Record<string, any>;
