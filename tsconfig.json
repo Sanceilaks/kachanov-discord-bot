@@ -11,9 +11,7 @@
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
-  "files": [
-    "src/@types/discord.d.ts"
-  ],
+  "files": ["src/@types/discord.d.ts"],
   "ts-node": {
     "files": true
   }

@@ -45,9 +45,13 @@ export default class BotClient extends DiscordClient {
     this.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
 
-      const command = this.commands.find(
-        (cmd) => cmd.data!.name === interaction.commandName,
+      const commandsData = await Promise.all(
+        this.commands.map((cmd) => cmd.getData!()),
       );
+      const command = this.commands.filter(
+        (_v, index) => commandsData[index].name == interaction.commandName,
+      )[0];
+
       if (!command) return;
 
       command.execute!(interaction).catch((error) => {
@@ -59,10 +63,10 @@ export default class BotClient extends DiscordClient {
       });
     });
 
-    this.once(Events.ClientReady, () => {
-      console.log("Ready!");
+    this.once(Events.ClientReady, async (cli) => {
+      console.log(`Logged in as ${cli.user.tag}`);
       this.application?.commands.set(
-        this.commands.map((cmd) => cmd.data!),
+        await Promise.all(this.commands.map((cmd) => cmd.getData!())),
       );
     });
   }

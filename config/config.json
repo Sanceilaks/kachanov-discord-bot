@@ -1,4 +1,10 @@
 {
-  "kachanov_discord_id": "264086395935522816",
-  "tokenEnvPath": "KACHANOV_DISCORD_TOKEN"
+  "admins": ["264086395935522816"],
+  "tokenEnvPath": "KACHANOV_DISCORD_TOKEN",
+  "settingsForServers": [
+    {
+      "serverId": "680034017604665347",
+      "channelsWithoutEphemeral": ["1119684255858053251"]
+    }
+  ]
 }

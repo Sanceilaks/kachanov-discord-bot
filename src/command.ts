@@ -4,8 +4,9 @@ import {
 } from "discord.js";
 
 type CommandExecuteFn = (interaction: Interaction) => Promise<void>;
+type GetDataFn = () => Promise<RESTPostAPIChatInputApplicationCommandsJSONBody>;
 
 export interface ICommand {
-  data?: RESTPostAPIChatInputApplicationCommandsJSONBody;
+  getData?: GetDataFn;
   execute?: CommandExecuteFn;
 }
