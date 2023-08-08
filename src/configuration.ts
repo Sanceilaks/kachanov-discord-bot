@@ -35,8 +35,8 @@ export class ConfigurationManager {
     });
   }
 
-  public get(key: string): string | undefined {
-    return this.configuration![key];
+  public get<Type>(key: string): Type | undefined {
+    return this.configuration![key] as Type | undefined;
   }
 
   public getConfigurationForServer(serverId: string): ServerConfiguration {

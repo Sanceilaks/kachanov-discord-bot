@@ -3,6 +3,7 @@ import { Jomini } from "jomini";
 import path from "path";
 import { getDocumentsFolder } from "platform-folders";
 import { getGamePath, getSteamPath } from "steam-game-path";
+import camelcaseKeysDeep from "camelcase-keys-deep";
 
 const hoi4GameId = 394360;
 
@@ -62,23 +63,37 @@ export class HoiModDescriptor {
   }
 }
 
-// export class HoiLauncherManager {
-//   jomini?: Jomini;
+class DLCLoad {
+  enabledMods?: string[];
+  disabledDlcs?: string[];
+}
 
-//   public async initialize() {
-//     this.jomini = await Jomini.initialize();
-//   }
+export class HoiLauncherManager {
+  jomini?: Jomini;
 
-//   public async getMods() {
-//     const mods: string[] = this.parsedSave!.mods;
+  public async initialize() {
+    this.jomini = await Jomini.initialize();
+  }
 
-//     const modsDescriptors = (
-//       await HoiModDescriptor.getDescriptors(this.jomini!)
-//     ).filter((mod) => mods.includes(mod.name!));
+  public async getDLCLoad() {
+    const data = await fs.promises.readFile(path.join(await HoiDirectories.getDocumentsPath(), "dlc_load.json"));
+    return camelcaseKeysDeep(JSON.parse(data.toString())) as DLCLoad;
+  }
 
-//     return modsDescriptors;
-//   }
-// }
+  public async getMods() {
+    const documentsPath = await HoiDirectories.getDocumentsPath();
+    const mods = (await this.getDLCLoad()).enabledMods!.map((mod) => {
+      const file = path.join(documentsPath, mod);
+      return (this.jomini!.parseText(fs.readFileSync(file).toString()) as HoiModDescriptor).name!;
+    });
+
+    const modsDescriptors = (
+      await HoiModDescriptor.getDescriptors(this.jomini!)
+    ).filter((mod) => mods.includes(mod.name!));
+
+    return modsDescriptors;
+  }
+}
 
 export class HoiSavesManager {
   jomini?: Jomini;

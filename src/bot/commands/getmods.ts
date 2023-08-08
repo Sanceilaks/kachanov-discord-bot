@@ -36,7 +36,10 @@ export default class GetMods implements ICommand {
         ),
     });
 
-    const mods = await interaction.client.hoiManager.getMods();
+    const mods = interaction.client.configuration.get<boolean>("isModsFromLaunchConfig") ?
+      await interaction.client.hoiLauncherManager.getMods() :
+      await interaction.client.hoiSavesManager.getMods();
+    
     interaction.editReply({
       content: mods
         .map(

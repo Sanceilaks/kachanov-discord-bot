@@ -6,14 +6,15 @@ import {
 } from "discord.js";
 import fs from "fs";
 import path from "path";
-import { HoiSavesManager } from "../hoimanager";
+import { HoiLauncherManager, HoiSavesManager } from "../hoimanager";
 import { ICommand } from "./command";
 import { ConfigurationManager } from "../configuration";
 
 export default class BotClient extends DiscordClient {
   configuration: ConfigurationManager;
   commands: ICommand[] = [];
-  hoiManager: HoiSavesManager;
+  hoiSavesManager: HoiSavesManager;
+  hoiLauncherManager: HoiLauncherManager;
 
   constructor(configuraton: ConfigurationManager) {
     super({
@@ -27,10 +28,11 @@ export default class BotClient extends DiscordClient {
 
     this.configuration = configuraton;
 
-    this.hoiManager = new HoiSavesManager("test.hoi4");
+    this.hoiSavesManager = new HoiSavesManager("test.hoi4");
+    this.hoiLauncherManager = new HoiLauncherManager();
   }
 
-  private async loadCommands(): Promise<void> {
+  private async loadCommands() {
     const commandsPath = path.join(__dirname, "commands");
     for (const entry of fs.readdirSync(commandsPath)) {
       if (!(entry.endsWith(".ts") || entry.endsWith(".js"))) continue;
@@ -41,7 +43,7 @@ export default class BotClient extends DiscordClient {
     }
   }
 
-  private async setupListeners(): Promise<void> {
+  private async setupListeners() {
     this.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
 
@@ -71,11 +73,12 @@ export default class BotClient extends DiscordClient {
     });
   }
 
-  public async start(): Promise<void> {
-    await this.hoiManager.initialize();
+  public async start() {
+    await this.hoiSavesManager.initialize();
+    await this.hoiLauncherManager.initialize();
     await this.loadCommands();
     await this.setupListeners();
 
-    this.login(process.env[this.configuration.get("tokenEnvPath")!]);
+    this.login(process.env[this.configuration.get<string>("tokenEnvPath")!]);
   }
 }

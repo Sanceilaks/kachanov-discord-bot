@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@types/camelcase-keys-deep": "^0.1.0",
     "@types/winreg": "^1.2.32",
     "nodemon": "^3.0.1",
     "prettier": "3.0.1",
@@ -11,6 +12,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "camelcase-keys-deep": "^0.1.0",
     "discord.js": "^14.12.1",
     "jomini": "^0.9.0",
     "moment": "^2.29.4",
