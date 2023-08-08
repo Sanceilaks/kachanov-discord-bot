@@ -8,13 +8,14 @@ import fs from "fs";
 import path from "path";
 import { HoiSavesManager } from "./hoisavesmanager";
 import { ICommand } from "./command";
+import { ConfigurationManager } from "./configuration";
 
 export default class BotClient extends DiscordClient {
-  envTokenName: string;
+  configuration: ConfigurationManager;
   commands: ICommand[] = [];
   hoiManager: HoiSavesManager;
 
-  constructor(envTokenName: string) {
+  constructor(configuraton: ConfigurationManager) {
     super({
       intents: [
         GatewayIntentBits.DirectMessages,
@@ -24,8 +25,9 @@ export default class BotClient extends DiscordClient {
       partials: [Partials.Channel, Partials.Message],
     });
 
+    this.configuration = configuraton;
+
     this.hoiManager = new HoiSavesManager("test.hoi4");
-    this.envTokenName = envTokenName;
   }
 
   private async loadCommands(): Promise<void> {
@@ -70,6 +72,6 @@ export default class BotClient extends DiscordClient {
     await this.loadCommands();
     await this.setupListeners();
 
-    this.login(process.env[this.envTokenName]);
+    this.login(process.env[this.configuration.get("tokenEnvPath")!]);
   }
 }

@@ -13,6 +13,7 @@
   "dependencies": {
     "discord.js": "^14.12.1",
     "jomini": "^0.9.0",
+    "moment": "^2.29.4",
     "platform-folders": "^0.6.0",
     "registry-js": "^1.15.1",
     "steam-game-path": "^2.2.0",
