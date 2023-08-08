@@ -9,7 +9,7 @@ export default class GetMods implements ICommand {
   getData = async () => {
     return new SlashCommandBuilder()
       .setName("get_mods")
-      .setDescription("Получить все модификации из сейва")
+      .setDescription("Получить все модификации для игры")
       .addStringOption((option) =>
         option
           .setName("format")
@@ -37,8 +37,8 @@ export default class GetMods implements ICommand {
     });
 
     const mods = interaction.client.configuration.get<boolean>("isModsFromLaunchConfig") ?
-      await interaction.client.hoiLauncherManager.getMods() :
-      await interaction.client.hoiSavesManager.getMods();
+      await interaction.client.hoiLauncherManager!.getMods() :
+      await interaction.client.hoiSavesManager!.getMods();
     
     interaction.editReply({
       content: mods

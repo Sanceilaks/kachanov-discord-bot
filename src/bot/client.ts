@@ -13,8 +13,8 @@ import { ConfigurationManager } from "../configuration";
 export default class BotClient extends DiscordClient {
   configuration: ConfigurationManager;
   commands: ICommand[] = [];
-  hoiSavesManager: HoiSavesManager;
-  hoiLauncherManager: HoiLauncherManager;
+  hoiSavesManager?: HoiSavesManager;
+  hoiLauncherManager?: HoiLauncherManager;
 
   constructor(configuraton: ConfigurationManager) {
     super({
@@ -74,8 +74,8 @@ export default class BotClient extends DiscordClient {
   }
 
   public async start() {
-    await this.hoiSavesManager.initialize();
-    await this.hoiLauncherManager.initialize();
+    await this.hoiSavesManager!.initialize();
+    await this.hoiLauncherManager!.initialize();
     await this.loadCommands();
     await this.setupListeners();
 
