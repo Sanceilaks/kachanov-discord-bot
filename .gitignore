@@ -131,3 +131,5 @@ dist
 .pnp.*
 
 yarn.lock
+**/test.hoi4
+package-lock.json

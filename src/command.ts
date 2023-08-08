@@ -1,8 +1,11 @@
-import { SlashCommandBuilder, Interaction } from "discord.js";
+import {
+  RESTPostAPIChatInputApplicationCommandsJSONBody,
+  Interaction,
+} from "discord.js";
 
 type CommandExecuteFn = (interaction: Interaction) => Promise<void>;
 
 export interface ICommand {
-    data?: SlashCommandBuilder;
-    execute?: CommandExecuteFn;
+  data?: RESTPostAPIChatInputApplicationCommandsJSONBody;
+  execute?: CommandExecuteFn;
 }
