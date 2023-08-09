@@ -1,6 +1,8 @@
 import Client from "./bot/client";
 import { ConfigurationManager } from "./configuration";
 import moment from "moment";
+import { DatabaseAdapter } from "./database";
+import { WebUI } from "./web/web";
 
 const target = ["log", "warn", "error", "info"];
 const originals: any[] = [];
@@ -20,8 +22,13 @@ for (const [k, v] of Object.entries(console)) {
   }
 }
 
+const database = new DatabaseAdapter();
 const configuration = new ConfigurationManager("config/config.json");
-configuration.initialize().then(() => {
-  const client = new Client(configuration);
+
+Promise.all([configuration.initialize(), database.initialize()]).then(() => {
+  const webui = new WebUI();
+  Promise.all([webui.initialize(), webui.startServer()]);
+
+  const client = new Client(configuration, database);
   client.start();
 });

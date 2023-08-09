@@ -25,6 +25,8 @@ export default class MoveAllCommand implements ICommand {
     if (!interaction.isChatInputCommand()) return;
     await interaction.deferReply({ ephemeral: true });
 
+    await interaction.guild?.fetch();
+
     const fromChannel = await interaction.guild?.channels.fetch(
       interaction.options.getChannel("from")?.id!,
     );
@@ -32,7 +34,11 @@ export default class MoveAllCommand implements ICommand {
       interaction.options.getChannel("to")?.id!,
     );
 
-    if ((!fromChannel?.isVoiceBased() && fromChannel?.type != ChannelType.GuildCategory) || !toChannel?.isVoiceBased()) {
+    if (
+      (!fromChannel?.isVoiceBased() &&
+        fromChannel?.type != ChannelType.GuildCategory) ||
+      !toChannel?.isVoiceBased()
+    ) {
       interaction.editReply({
         content: "Channel must be voice channels",
       });
@@ -40,17 +46,23 @@ export default class MoveAllCommand implements ICommand {
     }
 
     if (fromChannel?.type == ChannelType.GuildCategory) {
-      for (const [name, channel] of fromChannel.children.cache.filter((c) => c.isVoiceBased() && c.id != fromChannel.id)) {
+      for (const [name, channel] of fromChannel.children.cache.filter(
+        (c) => c.isVoiceBased() && c.id != fromChannel.id,
+      )) {
         for (const [_name, user] of channel.members) {
-          user.voice.setChannel(toChannel).catch(() => {
-            console.error(`Failed to move ${user.nickname} to ${toChannel.name}`);
+          user.voice.setChannel(toChannel).catch((с) => {
+            console.error(
+              `Failed to move ${user.nickname} to ${toChannel.name} due to ${с}`,
+            );
           });
         }
       }
     } else {
       for (const [_name, user] of fromChannel.members) {
-        user.voice.setChannel(toChannel).catch(() => {
-          console.error(`Failed to move ${user.nickname} to ${toChannel.name}`);
+        user.voice.setChannel(toChannel).catch((с) => {
+          console.error(
+            `Failed to move ${user.nickname} to ${toChannel.name} due to ${с}`,
+          );
         });
       }
     }

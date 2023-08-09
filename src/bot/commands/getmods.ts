@@ -28,24 +28,31 @@ export default class GetMods implements ICommand {
         interaction.guildId!,
       );
 
+    console.log(interaction.client.configuration.get<string[]>("admins")!);
+    console.log(interaction.user.id);
     await interaction.deferReply({
       ephemeral:
-        cfgForServer == null ||
-        !cfgForServer.channelsWithoutEphemeral!.includes(
-          interaction.channelId!,
-        ),
+        (cfgForServer == null ||
+          !cfgForServer.channelsWithoutEphemeral!.includes(
+            interaction.channelId!,
+          )) &&
+        !interaction.client.configuration
+          .get<string[]>("admins")
+          ?.includes(interaction.user.id),
     });
 
-    const mods = interaction.client.configuration.get<boolean>("isModsFromLaunchConfig") ?
-      await interaction.client.hoiLauncherManager!.getMods() :
-      await interaction.client.hoiSavesManager!.getMods();
-    
+    const mods = interaction.client.configuration.get<boolean>(
+      "isModsFromLaunchConfig",
+    )
+      ? await interaction.client.hoiLauncherManager!.getMods()
+      : await interaction.client.hoiSavesManager!.getMods();
+
     interaction.editReply({
       content: mods
         .map(
           (mod) =>
             (interaction.options.getString("format") == "openurl"
-              ? "<steam://openurl/"
+              ? "steam://openurl/<"
               : "<") +
             `https://steamcommunity.com/sharedfiles/filedetails/?id=${mod.remoteFileId!}> - ${
               mod.name

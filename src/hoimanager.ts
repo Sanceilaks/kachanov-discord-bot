@@ -8,10 +8,20 @@ import camelcaseKeysDeep from "camelcase-keys-deep";
 const hoi4GameId = 394360;
 
 namespace HoiDirectories {
+  /**
+   * Retrieves the path of the HOI4 game.
+   *
+   * @return {Promise<string>} The path of the HOI4 game.
+   */
   export async function getGameHoiPath(): Promise<string> {
     return getGamePath(hoi4GameId)?.game?.path!;
   }
 
+  /**
+   * Gets the path to the documents folder.
+   *
+   * @return {Promise<string>} The path to the documents folder.
+   */
   export async function getDocumentsPath(): Promise<string> {
     return path.join(
       getDocumentsFolder(),
@@ -30,25 +40,36 @@ export class HoiModDescriptor {
   remoteFileId?: string;
 
   /**
-   * Retrieves the descriptors from documents.
+   * Retrieves an array of HoiModDescriptors by reading and parsing .mod files from the mod folder.
+   *
+   * @param {Jomini} jomini - The Jomini instance used for parsing the file content.
+   * @return {Promise<HoiModDescriptor[]>} A promise that resolves to an array of HoiModDescriptors.
    */
   static async getDescriptors(jomini: Jomini): Promise<HoiModDescriptor[]> {
     const modFolder = path.join(await HoiDirectories.getDocumentsPath(), "mod");
 
     const files = await fs.promises.readdir(modFolder);
-    const descriptors: HoiModDescriptor[] = [];
-    for (const file of files) {
-      if (!file.endsWith(".mod")) continue;
-      const fileContent = await fs.promises.readFile(
-        path.join(modFolder, file),
-      );
-      descriptors.push(
-        await HoiModDescriptor.parse(jomini, fileContent.toString()),
-      );
-    }
+    const descriptors: HoiModDescriptor[] = await Promise.all(
+      files
+        .filter((file) => file.endsWith(".mod"))
+        .map(async (file) => {
+          const fileContent = await fs.promises.readFile(
+            path.join(modFolder, file),
+          );
+          return HoiModDescriptor.parse(jomini, fileContent.toString());
+        }),
+    );
+
     return descriptors;
   }
 
+  /**
+   * Parses the given content using the Jomini parser.
+   *
+   * @param {Jomini} jomini - The Jomini parser instance.
+   * @param {string} content - The content to be parsed.
+   * @return {HoiModDescriptor} The parsed HoiMod descriptor.
+   */
   static async parse(jomini: Jomini, content: string) {
     const parsed = jomini.parseText(content);
     let desc = new HoiModDescriptor();
@@ -75,16 +96,32 @@ export class HoiLauncherManager {
     this.jomini = await Jomini.initialize();
   }
 
+  /**
+   * Reads the "dlc_load.json" file from the documents path and returns the parsed data as a DLCLoad object.
+   *
+   * @return {DLCLoad} The parsed data from the "dlc_load.json" file.
+   */
   public async getDLCLoad() {
-    const data = await fs.promises.readFile(path.join(await HoiDirectories.getDocumentsPath(), "dlc_load.json"));
+    const data = await fs.promises.readFile(
+      path.join(await HoiDirectories.getDocumentsPath(), "dlc_load.json"),
+    );
     return camelcaseKeysDeep(JSON.parse(data.toString())) as DLCLoad;
   }
 
+  /**
+   * Retrieves the mods and their descriptors.
+   *
+   * @return {HoiModDescriptor[]} An array of mods descriptors.
+   */
   public async getMods() {
     const documentsPath = await HoiDirectories.getDocumentsPath();
     const mods = (await this.getDLCLoad()).enabledMods!.map((mod) => {
       const file = path.join(documentsPath, mod);
-      return (this.jomini!.parseText(fs.readFileSync(file).toString()) as HoiModDescriptor).name!;
+      return (
+        this.jomini!.parseText(
+          fs.readFileSync(file).toString(),
+        ) as HoiModDescriptor
+      ).name!;
     });
 
     const modsDescriptors = (
@@ -118,6 +155,11 @@ export class HoiSavesManager {
     const mods = await this.getMods();
   }
 
+  /**
+   * Retrieves the mods.
+   *
+   * @return {Promise<string[]>} The mods descriptors.
+   */
   public async getMods() {
     const mods: string[] = this.parsedSave!.mods;
 

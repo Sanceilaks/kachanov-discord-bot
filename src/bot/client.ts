@@ -9,24 +9,28 @@ import path from "path";
 import { HoiLauncherManager, HoiSavesManager } from "../hoimanager";
 import { ICommand } from "./command";
 import { ConfigurationManager } from "../configuration";
+import { DatabaseAdapter } from "../database";
 
 export default class BotClient extends DiscordClient {
   configuration: ConfigurationManager;
   commands: ICommand[] = [];
   hoiSavesManager?: HoiSavesManager;
   hoiLauncherManager?: HoiLauncherManager;
+  database: DatabaseAdapter;
 
-  constructor(configuraton: ConfigurationManager) {
+  constructor(configuraton: ConfigurationManager, database: DatabaseAdapter) {
     super({
       intents: [
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
       ],
       partials: [Partials.Channel, Partials.Message],
     });
 
     this.configuration = configuraton;
+    this.database = database;
 
     this.hoiSavesManager = new HoiSavesManager("test.hoi4");
     this.hoiLauncherManager = new HoiLauncherManager();
@@ -58,10 +62,22 @@ export default class BotClient extends DiscordClient {
 
       command.execute!(interaction).catch((error) => {
         console.error(error);
-        interaction.reply({
-          content: "There was an error while executing this command!",
-          ephemeral: true,
-        });
+        interaction
+          .reply({
+            content: "There was an error while executing this command!",
+            ephemeral: true,
+          })
+          .catch(() => {
+            interaction
+              .editReply({
+                content: "There was an error while executing this command!",
+              })
+              .catch((c) => {
+                console.error(
+                  `Cannot reply to interaction on error due to ${c}`,
+                );
+              });
+          });
       });
     });
 
@@ -74,6 +90,8 @@ export default class BotClient extends DiscordClient {
   }
 
   public async start() {
+    await this.database.insertCountry("GER");
+
     await this.hoiSavesManager!.initialize();
     await this.hoiLauncherManager!.initialize();
     await this.loadCommands();
