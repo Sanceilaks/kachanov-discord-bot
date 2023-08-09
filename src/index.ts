@@ -26,8 +26,8 @@ const database = new DatabaseAdapter();
 const configuration = new ConfigurationManager("config/config.json");
 
 Promise.all([configuration.initialize(), database.initialize()]).then(() => {
-  const webui = new WebUI();
-  Promise.all([webui.initialize(), webui.startServer()]);
+  const webui = new WebUI(database);
+  Promise.all([webui.initialize()]);
 
   const client = new Client(configuration, database);
   client.start();

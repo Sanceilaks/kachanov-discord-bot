@@ -9,7 +9,7 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "public", "public"],
   "exclude": ["node_modules", "dist"],
   "files": ["src/@types/discord.d.ts"],
   "ts-node": {

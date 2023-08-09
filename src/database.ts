@@ -5,7 +5,7 @@ namespace Schemas {
     countryTag: String,
     discordId: String,
     text: String,
-    time: Number
+    time: Number,
   };
 
   export const countrySchema = {
@@ -61,7 +61,7 @@ export class DatabaseAdapter {
     });
 
     if (country == null) {
-        throw new Error('Country not found');
+      throw new Error("Country not found");
     }
 
     await this.countries?.update(country, {
@@ -85,30 +85,42 @@ export class DatabaseAdapter {
     return application != null;
   }
 
-  async requestBorrowCountry(countryTag: string, discordId: string, text: string) {
+  async requestBorrowCountry(
+    countryTag: string,
+    discordId: string,
+    text: string,
+  ) {
     const country = await this.countries?.findOne({
       countryTag: countryTag,
     });
 
     if (country == null) {
-      throw new Error('Country not found');
+      throw new Error("Country not found");
     }
 
     if (country!.isBorrow) {
-      throw new Error('Country already taken');
+      throw new Error("Country already taken");
     }
 
     if (await this.isApplicationExists(countryTag, discordId)) {
-      throw new Error('Application already exists');
+      throw new Error("Application already exists");
     }
 
     await this.applications?.create({
       countryTag: countryTag,
       discordId: discordId,
       text: text,
-      time: Date.now()
+      time: Date.now(),
     });
 
     return true;
+  }
+
+  async getAllApplications() {
+    return await this.applications?.find({});
+  }
+
+  async getAllCountries() {
+    return await this.countries?.find({});
   }
 }

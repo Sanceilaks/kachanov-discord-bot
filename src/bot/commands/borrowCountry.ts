@@ -32,22 +32,22 @@ export default class GetMods implements ICommand {
     if (!interaction.isChatInputCommand()) return;
     await interaction.deferReply({ ephemeral: true });
 
-    const countryTag = interaction.options.getString("country_tag")!.toUpperCase();
+    const countryTag = interaction.options
+      .getString("country_tag")!
+      .toUpperCase();
     const reason = interaction.options.getString("reason")!;
-    
-    await interaction.client.database.requestBorrowCountry(
-      countryTag,
-      interaction.user.id,
-      reason
-    ).then(async (result) => {
-      await interaction.editReply({
-        content:`Заявка на занятие страны ${countryTag} отправлена на модерацию`
-      });
-    }).catch(async (error) => {
-      await interaction.editReply({
-        content:`Заявка на занятие страны ${countryTag} не отправлена на модерацию. ${error}`
+
+    await interaction.client.database
+      .requestBorrowCountry(countryTag, interaction.user.id, reason)
+      .then(async (result) => {
+        await interaction.editReply({
+          content: `Заявка на занятие страны ${countryTag} отправлена на модерацию`,
+        });
       })
-    });
-    
+      .catch(async (error) => {
+        await interaction.editReply({
+          content: `Заявка на занятие страны ${countryTag} не отправлена на модерацию. ${error}`,
+        });
+      });
   };
 }
