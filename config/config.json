@@ -1,11 +1,11 @@
 {
-  "admins": ["264086395935522816", "405339648416546816"],
-  "tokenEnvPath": "KACHANOV_DISCORD_TOKEN",
-  "settingsForServers": [
-    {
-      "serverId": "680034017604665347",
-      "channelsWithoutEphemeral": ["1119684255858053251"]
-    }
-  ],
-  "isModsFromLaunchConfig": true
+	"admins": ["264086395935522816", "405339648416546816"],
+	"tokenEnvPath": "KACHANOV_DISCORD_TOKEN",
+	"settingsForServers": [
+		{
+			"serverId": "680034017604665347",
+			"channelsWithoutEphemeral": ["1119684255858053251"]
+		}
+	],
+	"isModsFromLaunchConfig": true
 }

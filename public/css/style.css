@@ -1,0 +1,152 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap");
+
+* {
+	color: #fff;
+	
+}
+
+body {
+	font-family: "Ubuntu", sans-serif;
+	background-color: #1c2128;
+	text-align: center;
+	width: 100%;
+	min-height: 100vh;
+	max-height: 100vh;
+	display: flex;
+	overflow: hidden;
+}
+
+body::-webkit-scrollbar{
+    display: none;
+}
+
+.main {
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.countries_picker {
+	height: 99vh;
+	overflow: scroll;
+	border-right: 1px solid #fff;
+	width: 14%;
+}
+
+.countries_picker::-webkit-scrollbar {
+	display: none;
+}
+
+.application {
+	box-shadow: 0px 0px 10px #05a154;
+	background-color: #22272e;
+	border-radius: 5px;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 10px;
+	margin: 7px;
+	display: grid;
+	row-gap: 3px;
+}
+
+#wscontent {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+img {
+	border-radius: 100%;
+	border: 1px solid #fff;
+}
+
+button {
+	color: #1c2128;
+	background-color: #05a154;
+	border: 0px;
+	border-radius: 10px;
+	height: 20px;
+	margin: 5px;
+	transition: 0.2s;
+}
+
+button:hover {
+	background-color: #1c2128;
+	color: #fff;
+	transition: 0.2s;
+}
+
+span {
+	overflow-wrap: break-word;
+	max-width: 200px;
+}
+
+.avatar {
+	cursor: pointer;
+}
+
+.country {
+	cursor: pointer;
+	transition: 10ms;
+	color: #fff;
+}
+
+.selected {
+	position: relative;
+	color: #05a154;
+}
+
+.selected::after {
+	content: '';
+	position: absolute;
+	width: 100%;
+	transform: scaleX(1);
+	height: 2px;
+	bottom: 0;
+	left: 0;
+	background-color: #05a154;
+}
+
+.hover-underline-animation {
+	/* display: inline-block; */
+	position: relative;
+	color: #fff;
+}
+  
+.hover-underline-animation:hover::before {
+	transform: scaleX(1);
+	transform-origin: bottom left;
+}
+
+.hover-underline-animation::before {
+	content: '';
+	position: absolute;
+	width: 100%;
+	transform: scaleX(0);
+	height: 2px;
+	bottom: 0;
+	left: 0;
+	background-color: #05a154;
+	transform-origin: bottom right;
+	transition: transform 0.25s ease-out;
+}
+
+.hidden {
+	display: none;
+}
+
+.controls {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+
+.reset {
+	cursor: pointer;
+}
+
+.start_game {
+	cursor: pointer;
+}
