@@ -65,7 +65,7 @@ export class WebUI {
 
 						for (const country of countries!) {
 							this.discordClient.users.fetch(country.borrowerDiscordId).then((user) => {
-								user.send(`Тут будет ID и пароль. Спасибо за участие в тесте`).then(() => {
+								user.send(this.configuration.get<string>("passwordAndId")!).then(() => {
 									console.log(`Sent message to ${country.borrowerDiscordId}`);
 								});
 							});

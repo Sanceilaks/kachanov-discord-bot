@@ -7,5 +7,6 @@
 			"channelsWithoutEphemeral": ["1119684255858053251"]
 		}
 	],
-	"isModsFromLaunchConfig": true
+	"isModsFromLaunchConfig": true,
+	"passwordAndId": ""
 }

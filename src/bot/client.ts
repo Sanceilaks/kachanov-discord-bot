@@ -26,7 +26,7 @@ export default class BotClient extends DiscordClient {
 				GatewayIntentBits.Guilds,
 				GatewayIntentBits.GuildVoiceStates,
 			],
-			partials: [Partials.Channel, Partials.Message],
+			partials: [Partials.Channel, Partials.Message]
 		});
 
 		this.configuration = configuraton;
