@@ -1,136 +1,178 @@
-@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
-	color: #fff;
-	
+	margin: 0;
+	padding: 0;
+
+	font-family: 'Montserrat', sans-serif;
+
+	box-sizing: border-box;
 }
 
 body {
-	font-family: "Ubuntu", sans-serif;
-	background-color: #1c2128;
-	text-align: center;
 	width: 100%;
+
 	min-height: 100vh;
 	max-height: 100vh;
+
 	display: flex;
+
+	color: #fff;
+
+	background: linear-gradient(to bottom, #151515, #121212);
+
 	overflow: hidden;
+
+	user-select: none;
+	-webkit-user-select: none;
 }
 
-body::-webkit-scrollbar{
+body::-webkit-scrollbar {
     display: none;
 }
 
 .main {
-	text-align: center;
-	align-items: center;
-	justify-content: center;
+	display: flex;
+	flex-direction: column;
+
 	width: 100%;
+
+	gap: 15px;
+	padding: 15px;
+
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .countries_picker {
+	min-width: 300px;
+
 	height: 99vh;
+
+	display: flex;
+	flex-direction: column;
+
 	overflow: scroll;
-	border-right: 1px solid #fff;
-	width: 14%;
+	border-right: 2px solid #ffffff1a;
+
+	gap: 10px;
+	padding: 10px;
 }
 
 .countries_picker::-webkit-scrollbar {
 	display: none;
 }
 
-.application {
-	box-shadow: 0px 0px 10px #05a154;
-	background-color: #22272e;
-	border-radius: 5px;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	padding: 10px;
-	margin: 7px;
-	display: grid;
-	row-gap: 3px;
-}
-
 #wscontent {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+
+	gap: 15px;
+}
+
+.application {
 	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
+
+	background: url('../assets/bg-pattern.png'), linear-gradient(to bottom, #151515, #121212);
+	background-size: auto;
+	background-position: top center;
+
+	border: 2px solid #ffffff1a;
+	border-radius: 5px;
+
+	gap: 10px;
+	padding: 10px;
 }
 
-img {
-	border-radius: 100%;
-	border: 1px solid #fff;
+.application_items {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+
+	gap: 10px;
 }
 
-button {
-	color: #1c2128;
-	background-color: #05a154;
-	border: 0px;
-	border-radius: 10px;
-	height: 20px;
-	margin: 5px;
-	transition: 0.2s;
+.country_tag {
+	color: #32b071;
+	font-weight: 600;
 }
 
-button:hover {
-	background-color: #1c2128;
-	color: #fff;
-	transition: 0.2s;
+.country_tag, .text_why {
+	text-align: left;
 }
 
-span {
+.text_why {
+	max-width: 400px;
 	overflow-wrap: break-word;
-	max-width: 200px;
+}
+
+.application_button {
+	max-width: 400px;
+
+	color: #fff;
+	font-weight: 600;
+
+	cursor: pointer;
+
+	border: 0;
+	background: #05a154;
+	border-radius: 10px;
+
+	padding: 5px;
+
+	transition: .3s;
+}
+
+.application_button:hover {
+	opacity: .5;
 }
 
 .avatar {
 	cursor: pointer;
+	border-radius: 50%;
 }
 
 .country {
+	width: 100%;
+	display: flex;
+
 	cursor: pointer;
 	transition: 10ms;
 	color: #fff;
+
+	padding: 5px 10px;
+
+	transition: .3s;
+}
+
+.country:hover {
+	opacity: .5;
+}
+
+.country.selected:hover {
+	opacity: 1;
 }
 
 .selected {
 	position: relative;
-	color: #05a154;
 }
 
 .selected::after {
 	content: '';
-	position: absolute;
-	width: 100%;
-	transform: scaleX(1);
-	height: 2px;
-	bottom: 0;
-	left: 0;
-	background-color: #05a154;
-}
 
-.hover-underline-animation {
-	/* display: inline-block; */
-	position: relative;
-	color: #fff;
-}
-  
-.hover-underline-animation:hover::before {
-	transform: scaleX(1);
-	transform-origin: bottom left;
-}
-
-.hover-underline-animation::before {
-	content: '';
-	position: absolute;
 	width: 100%;
-	transform: scaleX(0);
-	height: 2px;
-	bottom: 0;
+	height: 100%;
+
+	position: absolute;
 	left: 0;
-	background-color: #05a154;
-	transform-origin: bottom right;
-	transition: transform 0.25s ease-out;
+	bottom: 0;
+
+	border-radius: 5px;
+	background: #ffffff1a;
+
+	z-index: -1;
+
+	transition: .3s;
 }
 
 .hidden {
@@ -138,15 +180,40 @@ span {
 }
 
 .controls {
-	position: absolute;
-	right: 10px;
-	top: 10px;
+	display: flex;
+	justify-content: space-between;
 }
 
-.reset {
+.controls div {
+	font-weight: 500;
+
 	cursor: pointer;
+
+	transition: .3s;
 }
 
-.start_game {
-	cursor: pointer;
+.controls div:hover {
+	color: #05a154;
+}
+
+.main-title {
+	font-size: 32px;
+	line-height: 35px;
+}
+
+@media (max-width: 1200px) {
+	#wscontent {
+		grid-template-columns: unset;
+	}
+
+	.text_why {
+		width: 100%;
+		max-width: unset;
+
+    	overflow-wrap: anywhere;
+	}
+
+	.application_button {
+		max-width: unset;
+	}
 }

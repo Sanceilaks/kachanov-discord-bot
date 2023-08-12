@@ -1,1 +1,0 @@
-powershell -Command ". ./install.ps1"

@@ -5,7 +5,7 @@ import { ConfigurationManager } from "../configuration";
 import BotClient from "../bot/client";
 import { createServer, type Server } from "http";
 
-const port = Number(process.env.PORT) || 1616;
+const port = Number(process.env.PORT) || 1717;
 
 export class WebUI {
 	server: Server;
@@ -52,7 +52,18 @@ export class WebUI {
 						break;
 
 					case "countryBorrowed":
-						await this.database.borrowCountry(data.countryTag, data.discordId);
+						this.database.borrowCountry(data.countryTag, data.discordId).then(() => {
+							this.discordClient.users.fetch(data.discordId).then(async (user) => {
+								const country = await this.database.countries?.findOne({ countryTag: data.countryTag })!;
+								const name = country!.countryName;
+								user.send(`Вы заняли ${name}`).then(() => {
+									console.log(`Sent message to ${data.discordId}`);
+								});
+							});
+						}).catch(() => {
+							console.error(`Failed to borrow country ${data.countryTag}`);
+						});
+						
 						break;
 					
 					case "getCountry":
@@ -65,7 +76,7 @@ export class WebUI {
 
 						for (const country of countries!) {
 							this.discordClient.users.fetch(country.borrowerDiscordId).then((user) => {
-								user.send(this.configuration.get<string>("passwordAndId")!).then(() => {
+								user.send(`${country.countryName} ${data.content}`).then(() => {
 									console.log(`Sent message to ${country.borrowerDiscordId}`);
 								});
 							});
@@ -73,13 +84,15 @@ export class WebUI {
 						break;
 					}
 					case "reset": {
-						//await this.database.applications?.clear();
-						(await this.database.countries?.find({})!).forEach((country) => {
-							this.database.countries?.update(country, {
-								isBorrow: false,
-								borrowerDiscordId: null,	
-							})
-						});
+						if (data.target === "applications")
+							await this.database.applications?.clear();
+						else if (data.target === "countries")
+							await Promise.all((await this.database.countries?.find({})!).map((country) => {
+								return this.database.countries?.update(country, {
+									isBorrow: false,
+									borrowerDiscordId: null,	
+								})
+							}));
 						break;
 					}
 				}

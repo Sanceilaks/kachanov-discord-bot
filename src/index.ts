@@ -28,8 +28,10 @@ const configuration = new ConfigurationManager("config/config.json");
 Promise.all([configuration.initialize(), database.initialize()]).then(() => {
 	const client = new Client(configuration, database);
 
-	const webui = new WebUI(database, configuration, client);
-	Promise.all([webui.initialize()]);
-
 	client.start();
+
+	client.once("ready", async () => {
+		const webui = new WebUI(database, configuration, client);
+		await webui.initialize();
+	});
 });

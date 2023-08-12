@@ -68,7 +68,7 @@ export class DatabaseAdapter extends EventEmitter {
 			throw new Error("Country not found");
 		}
 
-		await this.countries?.update(country, {
+		await this.countries?.update({ countryTag: countryTag }, {
 			borrowerDiscordId: discordId,
 			isBorrow: true,
 		});

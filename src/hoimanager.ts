@@ -1,4 +1,5 @@
 import fs from "fs";
+import gf from "graceful-fs";
 import { Jomini } from "jomini";
 import path from "path";
 import { getDocumentsFolder } from "platform-folders";
@@ -191,6 +192,9 @@ export const getCountryNameByTag = async (tag: string, manager: HoiSavesManager)
 		"russian",
 		"countries_l_russian.yml",
 	);
+
+	gf.gracefulify(fs);
+
 	let fileContent = (await fs.promises.readFile(localePath)).toString();
 	let result = fileContent.match(`.?${tag}:0.?\"(.+?)"`)?.at(1);
 	if (result)

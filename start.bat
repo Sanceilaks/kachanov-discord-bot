@@ -1,3 +1,4 @@
-start:
-yarn start
-goto start
+@echo oof
+:Start
+node dist/index.js
+GOTO:start
