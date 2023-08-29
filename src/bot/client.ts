@@ -94,10 +94,10 @@ export default class BotClient extends DiscordClient {
 		await this.hoiSavesManager!.initialize();
 		await this.hoiLauncherManager!.initialize();
 
-		// console.log("Initializing countries");
-		// for (const c of await this.hoiSavesManager?.getAvilCountries()!) {
-		// 	await this.database.insertCountry(c, (await getCountryNameByTag(c, this.hoiSavesManager!))!);
-		// }
+		console.log("Initializing countries");
+		for (const c of await this.hoiSavesManager?.getAvilCountries()!) {
+			await this.database.insertCountry(c, (await getCountryNameByTag(c, this.hoiSavesManager!))!);
+		}
 
 		await this.loadCommands();
 		await this.setupListeners();

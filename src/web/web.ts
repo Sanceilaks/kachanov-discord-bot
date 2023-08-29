@@ -57,7 +57,9 @@ export class WebUI {
 								const country = await this.database.countries?.findOne({ countryTag: data.countryTag })!;
 								const name = country!.countryName;
 								user.send(`Вы заняли ${name}`).then(() => {
-									console.log(`Sent message to ${data.discordId}`);
+									console.log(`Sent message to ${user.displayName}(${user.tag}) : ${data.discordId}`);
+								}).catch(() => {
+									console.error(`Failed to send message to ${user.displayName}(${user.tag}) : ${data.discordId}`);
 								});
 							});
 						}).catch(() => {
@@ -77,7 +79,9 @@ export class WebUI {
 						for (const country of countries!) {
 							this.discordClient.users.fetch(country.borrowerDiscordId).then((user) => {
 								user.send(`${country.countryName} ${data.content}`).then(() => {
-									console.log(`Sent message to ${country.borrowerDiscordId}`);
+									console.log(`Sent message to ${user.displayName}(${user.tag}) : ${user.id}`);
+								}).catch(() => {
+									console.error(`Failed to send message to ${user.displayName}(${user.tag}) : ${user.id}`);
 								});
 							});
 						}

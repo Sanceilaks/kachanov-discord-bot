@@ -186,6 +186,7 @@ export class HoiSavesManager {
 }
 
 export const getCountryNameByTag = async (tag: string, manager: HoiSavesManager) => {
+	console.log(`Finding country name by tag: ${tag}`);
 	const localePath = path.join(
 		await HoiDirectories.getGameHoiPath(),
 		"localisation",
@@ -197,25 +198,40 @@ export const getCountryNameByTag = async (tag: string, manager: HoiSavesManager)
 
 	let fileContent = (await fs.promises.readFile(localePath)).toString();
 	let result = fileContent.match(`.?${tag}:0.?\"(.+?)"`)?.at(1);
-	if (result)
+	if (result) {
+		console.log(`Found in ${localePath}`);
 		return result;
+	}
+		
 
 	for (const mod of await manager.getMods()) {
 		let modLocalePath = path.join(mod.path!, "localisation", "russian", "countries_l_russian.yml");
 		if (!fs.existsSync(modLocalePath))
 			modLocalePath = path.join(mod.path!, "localisation", "countries_l_russian.yml");
 		if (!fs.existsSync(modLocalePath))
+			modLocalePath = path.join(mod.path!, "localisation", "countries_l_english.yml");
+		if (!fs.existsSync(modLocalePath))
+			modLocalePath = path.join(mod.path!, "localisation", "english", "countries_l_english.yml");
+		if (!fs.existsSync(modLocalePath)) {
 			continue;
+		}
+			
 
 		let fileContent = (await fs.promises.readFile(modLocalePath)).toString();
 		let result = fileContent.match(`.?${tag}:0.?\"(.+?)"`)?.at(1);
 		
-		if (result)
+		if (result) {
+			console.log(`Found in ${localePath}`);
 			return result;
+		}
 
-		result = fileContent.match(`.?${tag}_neutrality:0.?\"(.+?)"`)?.at(1);
+		result = fileContent.match(`.?${tag}.+?:0.?\"(.+?)"`)?.at(1);
 
-		if (result)
+		if (result) {
+			console.log(`Found in ${modLocalePath}`);
 			return result;
+		}
 	}
+
+	console.log(`Cannot find localisation for ${tag}`);
 };

@@ -33,8 +33,6 @@ export class DatabaseAdapter extends EventEmitter {
 			Schemas.countryApplicatonSchema,
 		);
 		this.countries = await this.db.model("countries", Schemas.countrySchema);
-
-		//await this.applications.clear();
 	}
 
 	async insertApplication(countryTag: string, discordId: string, text: string) {
@@ -60,24 +58,13 @@ export class DatabaseAdapter extends EventEmitter {
 	}
 
 	async borrowCountry(countryTag: string, discordId: string) {
-		const country = await this.countries?.findOne({
-			countryTag: countryTag,
-		});
-
-		if (country == null) {
-			throw new Error("Country not found");
-		}
-
 		await this.countries?.update({ countryTag: countryTag }, {
 			borrowerDiscordId: discordId,
 			isBorrow: true,
 		});
 
-		(await this.applications?.find({ countryTag: countryTag })!).forEach(
-			(application) => {
-				this.applications?.remove(application);
-			},
-		);
+		await this.applications?.remove({ countryTag: countryTag });
+		await this.applications?.remove({ discordId: discordId });
 
 		this.emit("countryBorrow", countryTag);
 	}
