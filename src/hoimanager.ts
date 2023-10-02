@@ -156,13 +156,19 @@ export class HoiSavesManager {
 		return this.jomini!.parseText(fileContent);
 	}
 
+	public async getCountryData(countryTag: string) {
+		return this.parsedSave!["countries"][countryTag];
+	}
+
 	public async getAvilCountries() {
-		const states: Record<string, any> = this.parsedSave!.states;
+		const states: Record<string, any> = this.parsedSave!["states"];
+
 		let countries = new Set<string>();
 
 		let stateNumber = 1;
 		while (states[stateNumber]) {
-			countries.add(states[stateNumber]["owner"]);
+			const tag = states[stateNumber]["owner"];
+			countries.add(tag);
 			stateNumber++;
 		}
 
@@ -187,7 +193,11 @@ export class HoiSavesManager {
 
 export const getCountryNameByTag = async (tag: string, manager: HoiSavesManager) => {
 	console.log(`Finding country name by tag: ${tag}`);
-	const localePath = path.join(
+
+	const party: string = (await manager.getCountryData(tag))["politics"]["ruling_party"];
+	console.log(`Party: ${party}`);
+
+	let localePath = path.join(
 		await HoiDirectories.getGameHoiPath(),
 		"localisation",
 		"russian",
@@ -196,13 +206,19 @@ export const getCountryNameByTag = async (tag: string, manager: HoiSavesManager)
 
 	gf.gracefulify(fs);
 
+	if (!fs.existsSync(localePath))
+		localePath = path.join(
+			await HoiDirectories.getGameHoiPath(),
+			"localisation",
+			"countries_l_russian.yml",
+		);
+
 	let fileContent = (await fs.promises.readFile(localePath)).toString();
-	let result = fileContent.match(`.?${tag}:0.?\"(.+?)"`)?.at(1);
+	let result = fileContent.match(`.?${tag}_${party}:0.?\"(.+?)"`)?.at(1);
 	if (result) {
 		console.log(`Found in ${localePath}`);
 		return result;
 	}
-		
 
 	for (const mod of await manager.getMods()) {
 		let modLocalePath = path.join(mod.path!, "localisation", "russian", "countries_l_russian.yml");
@@ -216,7 +232,6 @@ export const getCountryNameByTag = async (tag: string, manager: HoiSavesManager)
 			continue;
 		}
 			
-
 		let fileContent = (await fs.promises.readFile(modLocalePath)).toString();
 		let result = fileContent.match(`.?${tag}:0.?\"(.+?)"`)?.at(1);
 		
@@ -225,7 +240,7 @@ export const getCountryNameByTag = async (tag: string, manager: HoiSavesManager)
 			return result;
 		}
 
-		result = fileContent.match(`.?${tag}.+?:0.?\"(.+?)"`)?.at(1);
+		result = fileContent.match(`.?${tag}_${party}:0.?\"(.+?)"`)?.at(1);
 
 		if (result) {
 			console.log(`Found in ${modLocalePath}`);
