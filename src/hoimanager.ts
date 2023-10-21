@@ -223,6 +223,8 @@ export const getCountryNameByTag = async (tag: string, manager: HoiSavesManager)
 	for (const mod of await manager.getMods()) {
 		let modLocalePath = path.join(mod.path!, "localisation", "russian", "countries_l_russian.yml");
 		if (!fs.existsSync(modLocalePath))
+			modLocalePath = path.join(mod.path!, "localisation", "ww1_countries_l_russian.yml");
+		if (!fs.existsSync(modLocalePath))
 			modLocalePath = path.join(mod.path!, "localisation", "countries_l_russian.yml");
 		if (!fs.existsSync(modLocalePath))
 			modLocalePath = path.join(mod.path!, "localisation", "countries_l_english.yml");

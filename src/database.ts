@@ -65,6 +65,7 @@ export class DatabaseAdapter extends EventEmitter {
 
 		await this.applications?.remove({ countryTag: countryTag });
 		await this.applications?.remove({ discordId: discordId });
+	
 
 		this.emit("countryBorrow", countryTag);
 	}

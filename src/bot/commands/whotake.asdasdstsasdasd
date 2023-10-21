@@ -1,0 +1,39 @@
+import {
+	Interaction,
+	SlashCommandBuilder,
+	MessageComponentBuilder,
+	EmbedBuilder,
+	Colors,
+} from "discord.js";
+import { ICommand } from "../command";
+import { getCountryNameByTag } from "../../hoimanager";
+import { application } from "express";
+
+export default class WhoTake implements ICommand {
+	getData = async () => {
+		return new SlashCommandBuilder()
+			.setName("who_take")
+			.setDescription("Узнать кто занял страну")
+            .addStringOption((option) => option.setName("country_tag").setDescription("Тег страны").setRequired(true))
+			.toJSON();
+	};
+
+	execute = async (interaction: Interaction) => {
+		if (!interaction.isChatInputCommand()) return;
+		await interaction.deferReply({ ephemeral: true });
+		
+        const countryTag = interaction.options.getString("country_tag")!.toUpperCase();
+
+        interaction.client.database.countries?.findOne({ countryTag: countryTag }).then(async (country) => {
+            if (country == null) {
+                await interaction.editReply("Такой страны нет");
+                return;
+            }
+
+            const borrowerDiscordId: string = country.borrowerDiscordId;
+            const tag = (await interaction.client.users.fetch(borrowerDiscordId)).tag;
+
+            await interaction.editReply(`@${tag} занял ${country.countryName}`);
+        })
+	};
+}
